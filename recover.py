@@ -36,7 +36,7 @@ def recover_rec (parent_id, path):
 	new_path = path + '/' + c_node["qname_localname"]
 	cur.execute("select * from alf_child_assoc where parent_node_id =" + p_id + ";")
 	
-	childs = array.array('i')
+	os.makedirs(os.path.dirname(backup_path+new_path), exist_ok=True) # recreate empty folders
 	
 	nodes = cur.fetchall()
 	for node in nodes:
@@ -50,8 +50,7 @@ def recover_rec (parent_id, path):
 					cur.execute("select * from alf_content_url where id = " + str(nd['content_url_id']) + ";")
 					nu = cur.fetchone() # Alfresco calls the binary path a url...
 					if nu:
-						os.makedirs(os.path.dirname(backup_path+new_path), exist_ok=True)
-						copyfile(contentstore_path + nu['content_url'][7:], backup_path + new_path)
+						# os.makedirs(os.path.dirname(backup_path+new_path), exist_ok=True) # recreate only used folders						copyfile(contentstore_path + nu['content_url'][7:], backup_path + new_path)
 			return
 		recover_rec(node['child_node_id'],new_path)
 
